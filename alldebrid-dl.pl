@@ -26,7 +26,7 @@
 =head1
 usage: alldebrid-dl.pl [-d destination dir.] [link ...]
 if no links are given in the command line, the script will attempt to read
-links from stdin
+links from stdin (one per line)
 =cut
 
 
