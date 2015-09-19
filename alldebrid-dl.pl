@@ -74,17 +74,10 @@ else {
 my $browser = WWW::Mechanize->new();
 
 my $response = $browser->get(LOGIN_LINK.'?action=info_user&login='.LOGIN.'&pw='.PASSWORD);
-if (not $response->is_success) {
-    print STDERR $response->status_line, "\n";
-    exit 1;
-}
+die $response->status_line unless ($response->is_success);
 
 my $content = $response->decoded_content;
-
-if ($content eq 'login fail') {
-    print $content."\n";
-    exit 1;
-}
+die $content if ($content eq 'login fail');
 
 my $xmlParser = XML::LibXML->new();
 my $xmlDoc = $xmlParser->parse_string($content);
@@ -92,10 +85,7 @@ my $xmlDoc = $xmlParser->parse_string($content);
 my $accountType = $xmlDoc->findvalue('/account/type');
 my $accountCookie = $xmlDoc->findvalue('/account/cookie');
 
-if ($accountType ne 'premium') {
-    print STDERR 'Not premium ('.$accountType.')'."\n";
-    exit 1;
-}
+die 'Not premium ('.$accountType.')' unless ($accountType eq 'premium');
 
 foreach my $link (@links) {
     $link = escape($link);
