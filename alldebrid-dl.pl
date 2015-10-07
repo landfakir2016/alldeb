@@ -73,7 +73,7 @@ else {
 
 my $browser = WWW::Mechanize->new();
 
-my $response = $browser->get(LOGIN_LINK.'?action=info_user&login='.LOGIN.'&pw='.PASSWORD);
+my $response = $browser->get( LOGIN_LINK.'?action=info_user&login='.escape(LOGIN).'&pw='.escape(PASSWORD));
 die $response->status_line unless ($response->is_success);
 
 my $content = $response->decoded_content;
@@ -88,8 +88,7 @@ my $accountCookie = $xmlDoc->findvalue('/account/cookie');
 die 'Not premium ('.$accountType.')' unless ($accountType eq 'premium');
 
 foreach my $link (@links) {
-    $link = escape($link);
-    my $response = $browser->get(DEBRID_SERVICE_LINK.'&link='.$link,
+    my $response = $browser->get(DEBRID_SERVICE_LINK.'&link='.escape($link),
         Cookie => 'uid='.$accountCookie);
 
     if ($response->is_success) {
