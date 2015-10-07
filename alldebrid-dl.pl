@@ -87,6 +87,7 @@ my $accountCookie = $xmlDoc->findvalue('/account/cookie');
 
 die 'Not premium ('.$accountType.')' unless ($accountType eq 'premium');
 
+my $failedDownloads = 0;
 foreach my $link (@links) {
     my $response = $browser->get(DEBRID_SERVICE_LINK.'&link='.escape($link),
         Cookie => 'uid='.$accountCookie);
@@ -96,10 +97,12 @@ foreach my $link (@links) {
 
         if ($$json{'error'} eq '') {
             print 'Downloading : '.$$json{'link'}, "\n";
-            system 'curl', '-O', '-b', 'uid='.$accountCookie, $$json{'link'};
+            my $exitCode = system 'curl', '-O', '-b', 'uid='.$accountCookie, $$json{'link'};
             print "\n";
+            $failedDownloads++ if ($exitCode != 0);
         }
         else {
+            $failedDownloads++;
             print STDERR $link.' : '.$$json{'error'}, "\n";
         }
     }
@@ -107,3 +110,5 @@ foreach my $link (@links) {
         print STDERR $link.' : '.$response->status_line, "\n";
     }
 }
+
+exit $failedDownloads;
