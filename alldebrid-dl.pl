@@ -97,7 +97,7 @@ foreach my $link (@links) {
 
         if ($$json{'error'} eq '') {
             print 'Downloading : '.$$json{'link'}, "\n";
-            my $exitCode = system 'curl', '-O', '-b', 'uid='.$accountCookie, $$json{'link'};
+            my $exitCode = system 'curl', '-g', '-O', '-b', 'uid='.$accountCookie, $$json{'link'};
             print "\n";
             $failedDownloads++ if ($exitCode != 0);
         }
