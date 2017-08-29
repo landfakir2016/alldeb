@@ -79,11 +79,14 @@ die $response->status_line unless ($response->is_success);
 my $content = $response->decoded_content;
 die $content if ($content eq 'login fail');
 
+# add root node
+$content = '<root>' . $content . '</root>';
+
 my $xmlParser = XML::LibXML->new();
 my $xmlDoc = $xmlParser->parse_string($content);
 
-my $accountType = $xmlDoc->findvalue('/account/type');
-my $accountCookie = $xmlDoc->findvalue('/account/cookie');
+my $accountType = $xmlDoc->findvalue('/root/account/type');
+my $accountCookie = $xmlDoc->findvalue('/root/account/cookie');
 
 die 'Not premium ('.$accountType.')' unless ($accountType eq 'premium');
 
